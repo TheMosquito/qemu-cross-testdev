@@ -61,7 +61,7 @@ ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_local_machine_ip_add
 
 ```
 docker cp testdev:/root/.ssh/id_rsa id_rsa
-ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 your_local_machine_ip_address reboot
+ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_local_machine_ip_address reboot
 ```
 
 ### [Hard] shutdown
