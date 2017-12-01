@@ -54,14 +54,14 @@ The first run will take sometime (~22 min) to download and build the QEMU images
 
 ```
 docker cp testdev:/root/.ssh/id_rsa id_rsa
-ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_local_machine_ip_address
+ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_machine_ip_address
 ```
 
 ### [Clean] shutdown
 
 ```
 docker cp testdev:/root/.ssh/id_rsa id_rsa
-ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_local_machine_ip_address reboot
+ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_machine_ip_address reboot
 ```
 
 ### [Hard] shutdown
