@@ -43,7 +43,7 @@ time make testdev ARCH=x86_64
 The first run will take sometime to download and build the QEMU images.  Any time after that it should be pretty quick.
 
 
-### Check if ready
+### Check if ready (after `make testdev` returns)
 
 `docker logs testdev`, look for `testdev ready to go!!!` message.
 
