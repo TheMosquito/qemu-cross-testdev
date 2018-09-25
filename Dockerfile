@@ -1,8 +1,8 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ARG QEMUV
 
-RUN apt-get update && apt-get -y install qemu qemu-utils qemu-kvm cloud-utils wget xterm pkg-config zlib1g-dev libglib2.0-dev libpixman-1-dev git bison flex make curl kmod parted netcat udev
+RUN apt-get update && apt-get -y install qemu qemu-utils qemu-kvm cloud-utils wget xterm pkg-config zlib1g-dev libglib2.0-dev libpixman-1-dev git bison flex make curl kmod parted netcat udev python
 
 RUN mkdir -p /root
 WORKDIR /root

@@ -2,7 +2,7 @@
 
 ### Prereq
 
-Ubuntu 16.04 x86_64 with 4 virtual (2 physical) cores and 4 GB RAM.
+Ubuntu 18.04 (or 16.04) x86_64 with 4 virtual (2 physical) cores and 4 GB RAM.
 
 ```
 echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu xenial edge" >/etc/apt/sources.list.d/docker.list
@@ -18,6 +18,11 @@ As `root`:
 ```
 git clone https://github.com/open-horizon/qemu-cross-testdev
 cd qemu-cross-testdev
+```
+
+(Optional) For testing with Ubuntu 16.04 images:
+```
+git checkout u16
 ```
 
 32-bit ARM:
@@ -54,7 +59,7 @@ The first run will take sometime (~22 min) to download and build the QEMU images
 
 ```
 docker cp testdev:/root/.ssh/id_rsa id_rsa
-ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_machine_ip_address
+ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_machine_ip_address # not localhost
 ```
 
 ### [Clean] shutdown
@@ -63,6 +68,8 @@ ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_machine_ip_address
 docker cp testdev:/root/.ssh/id_rsa id_rsa
 ssh -i id_rsa -o StrictHostKeyChecking=no -p 2222 root@your_machine_ip_address reboot
 ```
+
+Check with `docker ps -a` that the container has stopped, then cleanup with the hard shutdown below.
 
 ### [Hard] shutdown
 

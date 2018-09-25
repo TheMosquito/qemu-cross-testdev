@@ -1,8 +1,8 @@
 
 ARCH=$(shell uname -m)
 HOST_ARCH=$(shell uname -m)
-TAG=1.0.0
-QEMUV=v2.10.1
+QEMUV=v2.12.1
+TAG=$(QEMUV)
 PACKAGE=qemu
 IMAGE=$(PACKAGE)
 #CACHE_FLAG=--no-cache
@@ -41,24 +41,24 @@ $(IMAGE)-$(TAG).flag: Dockerfile
 	docker tag $(IMAGE):$(TAG) $(IMAGE):latest
 	touch $@
 
-targets/$(ARCH)/xenial-server-cloudimg-$(PACKAGE_ARCH)-disk1.img: $(IMAGE)-$(TAG).flag
+targets/$(ARCH)/bionic-server-cloudimg-$(PACKAGE_ARCH).img: $(IMAGE)-$(TAG).flag
 	mkdir -p targets/$(ARCH)
 	test -s $@ && touch $@ || \
 	docker run --rm -it -v $$PWD/targets:/targets qemu:$(TAG) /bin/bash -c '\
 		cd /targets/$(ARCH); \
-		curl -sLO https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-$(PACKAGE_ARCH)-disk1.img \
+		curl -sLO https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-$(PACKAGE_ARCH).img \
 		'
 	touch $@
 
-baseimage: targets/$(ARCH)/xenial-server-cloudimg-$(PACKAGE_ARCH)-disk1.img
+baseimage: targets/$(ARCH)/bionic-server-cloudimg-$(PACKAGE_ARCH).img
 
-targets/$(ARCH)/vmlinuz: targets/$(ARCH)/xenial-server-cloudimg-$(PACKAGE_ARCH)-disk1.img
+targets/$(ARCH)/vmlinuz: targets/$(ARCH)/bionic-server-cloudimg-$(PACKAGE_ARCH).img
 	docker run --rm -it -v $$PWD/targets:/targets \
 		--privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules \
 		qemu:$(TAG) /bin/bash -c '\
 		cd /targets/$(ARCH); \
 		modprobe nbd max_part=16; \
-		qemu-nbd -c /dev/nbd0 xenial-server-cloudimg-$(PACKAGE_ARCH)-disk1.img; \
+		qemu-nbd -c /dev/nbd0 bionic-server-cloudimg-$(PACKAGE_ARCH).img; \
 		partprobe /dev/nbd0; \
 		mount -r /dev/nbd0p1 /mnt; \
 		cp -f /mnt/boot/vmlinuz* vmlinuz; \
@@ -68,13 +68,13 @@ targets/$(ARCH)/vmlinuz: targets/$(ARCH)/xenial-server-cloudimg-$(PACKAGE_ARCH)-
 		'
 	touch $@
 
-targets/$(ARCH)/initrd.img: targets/$(ARCH)/xenial-server-cloudimg-$(PACKAGE_ARCH)-disk1.img
+targets/$(ARCH)/initrd.img: targets/$(ARCH)/bionic-server-cloudimg-$(PACKAGE_ARCH).img
 	docker run --rm -it -v $$PWD/targets:/targets \
 		--privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules \
 		qemu:$(TAG) /bin/bash -c '\
 		cd /targets/$(ARCH); \
 		modprobe nbd max_part=16; \
-		qemu-nbd -c /dev/nbd0 xenial-server-cloudimg-$(PACKAGE_ARCH)-disk1.img; \
+		qemu-nbd -c /dev/nbd0 bionic-server-cloudimg-$(PACKAGE_ARCH).img; \
 		partprobe /dev/nbd0; \
 		mount -r /dev/nbd0p1 /mnt; \
 		cp -f /mnt/boot/initrd.img* initrd.img; \
@@ -88,7 +88,7 @@ vmlinuz: targets/$(ARCH)/vmlinuz
 
 initrd.img: targets/$(ARCH)/initrd.img
 
-targets/$(ARCH)/osimage.img: targets/$(ARCH)/xenial-server-cloudimg-$(PACKAGE_ARCH)-disk1.img bin/run.sh bin/reboot.sh bin/cloudconfig.sh targets/$(ARCH)/vmlinuz targets/$(ARCH)/initrd.img
+targets/$(ARCH)/osimage.img: targets/$(ARCH)/bionic-server-cloudimg-$(PACKAGE_ARCH).img bin/run.sh bin/reboot.sh bin/cloudconfig.sh targets/$(ARCH)/vmlinuz targets/$(ARCH)/initrd.img
 	docker run --rm -it -v $$PWD/targets:/targets \
 		qemu:$(TAG) /bin/bash -c '\
 		rm -f /$@; \
@@ -127,7 +127,7 @@ stopdev:
 	docker rm -f testdev || true
 
 clean:
-	rm -rf *.flag
+	rm -rf *.flag id_rsa
 
 imageclean:
 	rm -rf targets
